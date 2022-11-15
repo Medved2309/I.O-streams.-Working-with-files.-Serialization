@@ -6,18 +6,18 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
 
         String[] products = {"Молоко", "Хлеб", "Гречневая крупа", "Курица", "Яйца куринные"};
         int[] prices = {50, 14, 80, 100, 90};
 
         //Basket basket = new Basket(products, prices);
-        Basket basket2 = Basket.loadFromTxtFile(new File("basket.txt"));
+        Basket basket2 = Basket.loadFromBinFile(new File("basket.bin"));
 
         if (basket2 == null) {
             basket2 = new Basket(products, prices);
         } else {
-            basket2 = Basket.loadFromTxtFile(new File("basket.txt"));
+            basket2 = Basket.loadFromBinFile(new File("basket.bin"));
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -57,7 +57,7 @@ public class Main {
                 basket2.addToCart(productNumber, productCount);
             }
         }
-        basket2.saveTxt(new File("basket.txt"));
+        basket2.saveBin(new File("basket.bin"));
     }
 }
 

@@ -2,8 +2,9 @@ package basket;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.nio.*;
 
-public class Basket {
+public class Basket implements Serializable{
 
     private int totalAmount;  // Итоговая сумма продуктов корзине
     private int sumProduct; // сумма продуктов
@@ -46,36 +47,16 @@ public class Basket {
         }
     }
 
-    public void saveTxt(File textFile) throws IOException {
-        try (PrintWriter out = new PrintWriter(textFile)) {
-            //       ...
-            for (String product : products) {
-                out.print(product + ", ");
-            }
-            out.println();
-            for (int price : prices) {
-                out.print(price + " ");
-            }
-            out.println();
-            for (int i : counts) {
-                out.print(i + " ");
-            }
-            out.println();
+    public void saveBin(File binFile) throws IOException {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(binFile))) {
+        out.writeObject(this);
         }
 
     }
 
-    public static Basket loadFromTxtFile(File textFile) throws FileNotFoundException {
-        try (Scanner scanner = new Scanner(new FileInputStream(textFile))) {
-            String[] products = scanner.nextLine().trim().split(", ");
-            int[] prices = Arrays.stream(scanner.nextLine().trim().split(" "))
-                    .mapToInt(Integer::parseInt)
-                    .toArray();
-            int[] counts = Arrays.stream(scanner.nextLine().trim().split(" "))
-                    .mapToInt(Integer::parseInt)
-                    .toArray();
-            return new Basket(products, prices, counts);
-
+    public static Basket loadFromBinFile(File binFile) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(binFile))) {
+            return (Basket) in.readObject();
         } catch (FileNotFoundException e) {
             return null;
         }
