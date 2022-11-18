@@ -1,4 +1,4 @@
-import basket.Basket;
+import main.java.basket.Basket;
 
 import java.io.File;
 import java.io.IOException;
