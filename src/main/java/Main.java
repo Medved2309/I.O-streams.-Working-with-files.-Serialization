@@ -1,4 +1,6 @@
 import main.java.basket.Basket;
+import main.java.clientLog.ClientLog;
+import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,18 +8,18 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParseException {
 
         String[] products = {"Молоко", "Хлеб", "Гречневая крупа", "Курица", "Яйца куринные"};
         int[] prices = {50, 14, 80, 100, 90};
 
         //Basket basket = new Basket(products, prices);
-        Basket basket2 = Basket.loadFromTxtFile(new File("basket.txt"));
+        Basket basket2 = Basket.loadFromJSON();
 
         if (basket2 == null) {
             basket2 = new Basket(products, prices);
         } else {
-            basket2 = Basket.loadFromTxtFile(new File("basket.txt"));
+            basket2 = Basket.loadFromJSON();
         }
 
         Scanner scanner = new Scanner(System.in);
@@ -55,9 +57,17 @@ public class Main {
                     continue;
                 }
                 basket2.addToCart(productNumber, productCount);
+                ClientLog clientLog = new ClientLog(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+                clientLog.log();
+
             }
         }
-        basket2.saveTxt(new File("basket.txt"));
+      //  basket2.saveTxt(new File("basket.txt"));
+//        basket2.saveTxt(new File("basket.txt"));
+//        basket2.saveJSON(new File("basket.json"));
+        basket2.saveJSON();
+//        Basket basket3 = new Basket();
+
     }
 }
 
