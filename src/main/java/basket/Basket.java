@@ -1,5 +1,10 @@
 package main.java.basket;
 
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.stream.JsonReader;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -36,6 +41,8 @@ public class Basket {
     }
 
     public void printCart() { // вывод корзины покупателя
+//      int totalAmount = 0;  // Итоговая сумма продуктов корзине
+//       int sumProduct = 0; // сумма продуктов
 
         for (int i = 0; i < counts.length; i++) {
             if (counts[i] > 0) {
@@ -47,7 +54,7 @@ public class Basket {
         System.out.println("Итоговая сумма к оплате: " + totalAmount);
     }
 
-    public void spisok() { // список продуктов вывод на консоль
+    public void listOfProducts() { // список продуктов вывод на консоль
         for (int i = 0; i < products.length; i++) {
             System.out.println((i + 1) + ". " + products[i] + " " + prices[i] + " руб/шт");
         }
@@ -72,61 +79,82 @@ public class Basket {
 //
 //    }
 
-
-    public void saveJSON() throws IOException {
-        JSONArray list1 = new JSONArray();
-        for (String product : products) {
-            list1.add(product);
-        }
-        JSONArray list2 = new JSONArray();
-        for (int price : prices) {
-            list2.add(price);
-        }
-        JSONArray list3 = new JSONArray();
-        for (int i : counts) {
-            list3.add(i);
-        }
-        JSONObject obj = new JSONObject();
-        obj.put("Наименовение продуктов", list1);
-        obj.put("Цена продуктов", list2);
-        obj.put("Колличество продуктов", list3);
+    public void saveJSON() throws IOException, JsonParseException {
 
         try (FileWriter file = new FileWriter("basket.json")) {
-            file.write(obj.toJSONString());
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.create();
+            Basket basket = new Basket(products, prices, counts);
+            file.write(gson.toJson(basket, main.java.basket.Basket.class));
+
         }
     }
-
-
-    public static Basket loadFromJSON() throws ParseException, FileNotFoundException, IOException {
-
-        JSONParser parser = new JSONParser();
+    public static Basket loadFromJSON() throws FileNotFoundException, IllegalStateException {
+        GsonBuilder builder = new GsonBuilder();
         try {
-            Object obj = parser.parse(new FileReader("basket.json"));
-            JSONObject jsonObject = (JSONObject) obj;
-
-            JSONArray products1 = (JSONArray) jsonObject.get("Наименовение продуктов");
-            String[] products = new String[products1.size()];
-            for (int i = 0; i < products1.size(); i++) {
-                products[i] = (String) products1.get(i);
-            }
-            JSONArray prices1 = (JSONArray) jsonObject.get("Цена продуктов");
-            int[] prices = new int[prices1.size()];
-            for (int i = 0; i < prices1.size(); i++) {
-                Long pricesLong = (Long) prices1.get(i);
-                prices[i] = pricesLong.intValue();
-            }
-            JSONArray counts1 = (JSONArray) jsonObject.get("Колличество продуктов");
-            int[] counts = new int[counts1.size()];
-            for (int i = 0; i < counts1.size(); i++) {
-                Long countsLong = (Long) counts1.get(i);
-                counts[i] = countsLong.intValue();
-            }
-            return new Basket(products, prices, counts);
-
+            Gson gson = builder.create();
+            Basket basket = gson.fromJson(new FileReader("basket.json"), main.java.basket.Basket.class);
+            return basket;
         } catch (FileNotFoundException e) {
             return null;
         }
     }
+
+
+//    public void saveJSON() throws IOException {
+//        JSONArray list1 = new JSONArray();
+//        for (String product : products) {
+//            list1.add(product);
+//        }
+//        JSONArray list2 = new JSONArray();
+//        for (int price : prices) {
+//            list2.add(price);
+//        }
+//        JSONArray list3 = new JSONArray();
+//        for (int i : counts) {
+//            list3.add(i);
+//        }
+//        JSONObject obj = new JSONObject();
+//        obj.put("Наименовение продуктов", list1);
+//        obj.put("Цена продуктов", list2);
+//        obj.put("Колличество продуктов", list3);
+//
+//        try (FileWriter file = new FileWriter("basket.json")) {
+//            file.write(obj.toJSONString());
+//        }
+//    }
+
+
+//    public static Basket loadFromJSON() throws ParseException, FileNotFoundException, IOException {
+//
+//        JSONParser parser = new JSONParser();
+//        try {
+//            Object obj = parser.parse(new FileReader("basket.json"));
+//            JSONObject jsonObject = (JSONObject) obj;
+//
+//            JSONArray products1 = (JSONArray) jsonObject.get("Наименовение продуктов");
+//            String[] products = new String[products1.size()];
+//            for (int i = 0; i < products1.size(); i++) {
+//                products[i] = (String) products1.get(i);
+//            }
+//            JSONArray prices1 = (JSONArray) jsonObject.get("Цена продуктов");
+//            int[] prices = new int[prices1.size()];
+//            for (int i = 0; i < prices1.size(); i++) {
+//                Long pricesLong = (Long) prices1.get(i);
+//                prices[i] = pricesLong.intValue();
+//            }
+//            JSONArray counts1 = (JSONArray) jsonObject.get("Колличество продуктов");
+//            int[] counts = new int[counts1.size()];
+//            for (int i = 0; i < counts1.size(); i++) {
+//                Long countsLong = (Long) counts1.get(i);
+//                counts[i] = countsLong.intValue();
+//            }
+//            return new Basket(products, prices, counts);
+//
+//        } catch (FileNotFoundException e) {
+//            return null;
+//        }
+//    }
 
 
 //    public static Basket loadFromTxtFile(File textFile) throws FileNotFoundException {

@@ -29,9 +29,8 @@ public class Main {
 //        System.out.println(name);
         boolean loadFileEnabled = Boolean.parseBoolean(xPath.compile("/shop/load/enabled").evaluate(doc));
         boolean saveLog = Boolean.parseBoolean(xPath.compile("/shop/log/enabled").evaluate(doc));
-
         //Basket basket = new Basket(products, prices);
-        Basket basket2 = Basket.loadFromJSON();
+        Basket basket2 = new Basket(products, prices);
 
         if (loadFileEnabled) {
             basket2 = Basket.loadFromJSON();
@@ -41,7 +40,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Список возможных товаров для покупки:");
-        basket2.spisok();
+        basket2.listOfProducts();
         while (true) {
             int productNumber = 0; // номер продукта
             int productCount = 0; // колличество продукта
@@ -50,7 +49,6 @@ public class Main {
             if ("end".equals(input)) {
                 System.out.println("Ваша корзина:");
                 basket2.printCart();
-
                 break;
             } else {
                 String[] parts = input.split(" ");
@@ -78,14 +76,12 @@ public class Main {
                 if (saveLog) {
                     clientLog.log();
                 }
-
-
-            }
+          }
         }
-        //  basket2.saveTxt(new File("basket.txt"));
+//        basket2.saveTxt(new File("basket.txt"));
 //        basket2.saveTxt(new File("basket.txt"));
 //        basket2.saveJSON(new File("basket.json"));
-        basket2.saveJSON();
+          basket2.saveJSON();
 //        Basket basket3 = new Basket();
 
     }
